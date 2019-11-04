@@ -49,7 +49,9 @@ namespace GCNUSBFeeder
         UsbEndpointReader reader = null;
         UsbEndpointWriter writer = null;
         UsbDevice GCNAdapter = null;
+        UsbDevice Turntable = null;
         IUsbDevice wholeGCNAdapter = null;
+        IUsbDevice wholeTurntable = null;
 
         public void Start()
         {
@@ -161,8 +163,89 @@ namespace GCNUSBFeeder
             }
             else
             {
-                Log(null, new LogEventArgs("GCN Adapter not detected."));
-                Driver.run = false;
+                USBFinder = new UsbDeviceFinder(0x12BA, 0x0140);
+                Turntable = UsbDevice.OpenUsbDevice(USBFinder);
+                if (Turntable != null)
+                {
+                    //Log(null, new LogEventArgs("Turntable detected."));
+                    //Driver.run = false;
+
+                    int transferLength;
+
+                    reader = Turntable.OpenEndpointReader(ReadEndpointID.Ep01);
+
+                    try
+                    {
+                        if (!JoystickHelper.checkJoystick(ref gcn1, 1)) { SystemHelper.CreateJoystick(1); }
+
+                        if (gcn1.AcquireVJD(1))
+                        {
+                            gcn1ok = true;
+                            gcn1.ResetAll();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex.Message.Contains("HRESULT: 0x8007000B"))
+                        {
+                            Log(null, new LogEventArgs("Error: vJoy driver mismatch. Did you install the wrong version (x86/x64)?"));
+                            Driver.run = false;
+                            return;
+                        }
+                    }
+
+                    if (noEventMode)
+                    {
+                        byte[] ReadBuffer = new byte[27]; // 27 bytes for turntable
+                        Log(null, new LogEventArgs("Turntable Driver successfully started, entering input loop."));
+                        run = true;
+                        while (run)
+                        {
+                            var ec = reader.Read(ReadBuffer, 10, out transferLength);
+
+                            if (transferLength > 0)
+                            {
+                                // Console.WriteLine(BitConverter.ToString(ReadBuffer));
+
+                                var input1 = TurntableState.GetState(ReadBuffer);
+
+                                if (gcn1ok) { JoystickHelper.setTurntable(ref gcn1, input1, 1, gcn1DZ); }
+                            }
+                            System.Threading.Thread.Sleep(10);
+                        }
+
+                        if (Turntable != null)
+                        {
+                            if (Turntable.IsOpen)
+                            {
+                                if (!ReferenceEquals(wholeTurntable, null))
+                                {
+                                    wholeTurntable.ReleaseInterface(0);
+                                }
+                                Turntable.Close();
+                            }
+                            Turntable = null;
+                            UsbDevice.Exit();
+                            Log(null, new LogEventArgs("Closing driver thread..."));
+                        }
+                        Log(null, new LogEventArgs("Driver thread has been stopped."));
+                    }
+                    else
+                    {
+                        Log(null, new LogEventArgs("Turntable Driver successfully started, entering input loop."));
+                        //using  Interrupt request instead of looping behavior.
+                        reader.DataReceivedEnabled = true;
+                        reader.DataReceived += table_DataReceived;
+                        reader.ReadBufferSize = 27;
+                        reader.ReadThreadPriority = System.Threading.ThreadPriority.Highest;
+                        run = true;
+                    }
+                }
+                else
+                {
+                    Log(null, new LogEventArgs("GCN Adapter not detected."));
+                    Driver.run = false;
+                }
             }
         }
 
@@ -216,6 +299,37 @@ namespace GCNUSBFeeder
                         GCNAdapter.Close();
                     }
                     GCNAdapter = null;
+                    UsbDevice.Exit();
+                    Log(null, new LogEventArgs("Closing driver thread..."));
+                }
+                Log(null, new LogEventArgs("Driver thread has been stopped."));
+            }
+        }
+
+        public void table_DataReceived(object sender, EndpointDataEventArgs e)
+        {
+            if (run)
+            {
+                var data = e.Buffer;
+                var input1 = TurntableState.GetState(data);
+
+                if (gcn1ok) { JoystickHelper.setTurntable(ref gcn1, input1, 1, gcn1DZ); }
+            }
+            else
+            {
+                reader.DataReceivedEnabled = false;
+
+                if (Turntable != null)
+                {
+                    if (Turntable.IsOpen)
+                    {
+                        if (!ReferenceEquals(wholeTurntable, null))
+                        {
+                            wholeTurntable.ReleaseInterface(0);
+                        }
+                        Turntable.Close();
+                    }
+                    Turntable = null;
                     UsbDevice.Exit();
                     Log(null, new LogEventArgs("Closing driver thread..."));
                 }

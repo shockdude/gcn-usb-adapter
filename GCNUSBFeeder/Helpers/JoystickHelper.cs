@@ -9,6 +9,36 @@ namespace GCNUSBFeeder
     public class JoystickHelper
     {
         public static event EventHandler<Driver.LogEventArgs> Log;
+
+        public static void setTurntable(ref vJoy joystick, TurntableState input, uint joystickID, ControllerDeadZones deadZones)
+        {
+            bool res;
+            int multiplier = 128;
+            //32767
+            //left stick - left table on X, right table on Y
+            res = joystick.SetAxis(multiplier * input.tableL, joystickID, HID_USAGES.HID_USAGE_X);
+            res = joystick.SetAxis(multiplier * input.tableR, joystickID, HID_USAGES.HID_USAGE_Y);
+
+            //right stick - effect on X, crossfader on Y
+            res = joystick.SetAxis(multiplier * input.effects, joystickID, HID_USAGES.HID_USAGE_RX);
+            res = joystick.SetAxis(multiplier * input.crossfader, joystickID, HID_USAGES.HID_USAGE_RY);
+
+            //buttons
+            res = joystick.SetBtn(input.cross, joystickID, 1);
+            res = joystick.SetBtn(input.circle, joystickID, 2);
+            res = joystick.SetBtn(input.square, joystickID, 3);
+            res = joystick.SetBtn(input.triangle, joystickID, 4);
+            res = joystick.SetBtn(input.ps, joystickID, 5);
+            res = joystick.SetBtn(input.select, joystickID, 7);
+            res = joystick.SetBtn(input.start, joystickID, 8);
+
+            //dpad button mode for DDR pad support
+            res = joystick.SetBtn(input.up, joystickID, 9);
+            res = joystick.SetBtn(input.down, joystickID, 10);
+            res = joystick.SetBtn(input.left, joystickID, 11);
+            res = joystick.SetBtn(input.right, joystickID, 12);
+        }
+
         public static void setJoystick(ref vJoy joystick, GCNState input, uint joystickID, ControllerDeadZones deadZones)
         {
             bool res;

@@ -133,6 +133,7 @@
     <Compile Include="Forms\Update.Designer.cs">
       <DependentUpon>Update.cs</DependentUpon>
     </Compile>
+    <Compile Include="TurntableState.cs" />
     <Compile Include="GCNState.cs" />
     <Compile Include="Helpers\JoystickHelper.cs" />
     <Compile Include="Forms\MainForm.cs">
