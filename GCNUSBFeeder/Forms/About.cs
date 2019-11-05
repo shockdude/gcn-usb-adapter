@@ -104,5 +104,10 @@ namespace GCNUSBFeeder
         {
 
         }
+
+        private void labelVersion_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

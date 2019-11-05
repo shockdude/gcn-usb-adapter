@@ -16,24 +16,19 @@ namespace GCNUSBFeeder
         public bool select;
         public bool ps;
 
-        public bool up;
-        public bool left;
-        public bool down;
-        public bool right;
+        public int POVstate;
 
         public int tableL;
         public int tableR;
         public int effects;
         public int crossfader;
 
-        public bool gR;
-        public bool rR;
-        public bool bR;
-        public bool gL;
-        public bool rL;
-        public bool bL;
-
-        public int POVstate;
+        //public bool gR;
+        //public bool rR;
+        //public bool bR;
+        //public bool gL;
+        //public bool rL;
+        //public bool bL;
 
         public TurntableState()
         {
@@ -46,22 +41,19 @@ namespace GCNUSBFeeder
             select  = false;
             ps = false;
 
-            up      = false;
-            left    = false;
-            down    = false;
-            right   = false;
+            POVstate = -1;
 
             tableL = 128;
             tableR = 128;
             crossfader = 128;
             effects = 128;
 
-            gR = false;
-            rR = false;
-            bR = false;
-            gL = false;
-            rL = false;
-            bL = false;
+            //gR = false;
+            //rR = false;
+            //bR = false;
+            //gL = false;
+            //rL = false;
+            //bL = false;
         }
 
         public static int Clamp(int value, int min, int max)
@@ -69,7 +61,7 @@ namespace GCNUSBFeeder
             return (value < min) ? min : (value > max) ? max : value;
         }
 
-        public static TurntableState GetState(byte[] input)
+        public static TurntableState GetState(ref byte[] input)
         {
             //[0]
             //01 = square
@@ -103,7 +95,7 @@ namespace GCNUSBFeeder
             //40 = blue left
 
             TurntableState pad = new TurntableState();
-            if (input.Length == 27)
+            if (input.Length >= 27)
             {
                 byte b = input[0];
                 pad.square = (b & (1 << 0)) != 0;
@@ -117,46 +109,14 @@ namespace GCNUSBFeeder
                 pad.ps = (b & (1 << 4)) != 0;
 
                 b = input[2];
-                switch(b)
+                if (b == 0xFF)
                 {
-                    case 0:
-                        pad.up = true;
-                        break;
-                    case 1:
-                        pad.up = true;
-                        pad.right = true;
-                        break;
-                    case 2:
-                        pad.right = true;
-                        break;
-                    case 3:
-                        pad.right = true;
-                        pad.down = true;
-                        break;
-                    case 4:
-                        pad.down = true;
-                        break;
-                    case 5:
-                        pad.down = true;
-                        pad.left = true;
-                        break;
-                    case 6:
-                        pad.left = true;
-                        break;
-                    case 7:
-                        pad.left = true;
-                        pad.up = true;
-                        break;
-                    default:
-                        break;
+                    pad.POVstate = -1;
                 }
-
-                //Generate POV state for vJoy.
-                //if (pad.right) { pad.POVstate = 1; }
-                //else if (pad.down) { pad.POVstate = 2; }
-                //else if (pad.left) { pad.POVstate = 3; }
-                //else if (pad.up) { pad.POVstate = 0; }
-                //else { pad.POVstate = -1; }
+                else
+                {
+                    pad.POVstate = b;
+                }
 
                 pad.tableL = Clamp((input[5] - 96) * 4, 0, 255);
                 pad.tableR = Clamp((input[6] - 96) * 4, 0, 255);

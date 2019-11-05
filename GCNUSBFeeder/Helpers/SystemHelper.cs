@@ -139,7 +139,7 @@ namespace GCNUSBFeeder
             {
                 WorkingDirectory = vJoyDirectory,
                 FileName = "vJoyConfig.exe",
-                Arguments = portNum + " -f -a x y z rx ry rz -b 12", //create
+                Arguments = portNum + " -f -a x y z rx ry rz -b 12 -p 1", //create
                 UseShellExecute = true,
                 WindowStyle = ProcessWindowStyle.Hidden,
             };

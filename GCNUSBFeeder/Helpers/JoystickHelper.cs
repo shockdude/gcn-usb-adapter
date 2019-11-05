@@ -28,15 +28,12 @@ namespace GCNUSBFeeder
             res = joystick.SetBtn(input.circle, joystickID, 2);
             res = joystick.SetBtn(input.square, joystickID, 3);
             res = joystick.SetBtn(input.triangle, joystickID, 4);
-            res = joystick.SetBtn(input.ps, joystickID, 5);
             res = joystick.SetBtn(input.select, joystickID, 7);
             res = joystick.SetBtn(input.start, joystickID, 8);
+            res = joystick.SetBtn(input.ps, joystickID, 11);
 
-            //dpad button mode for DDR pad support
-            res = joystick.SetBtn(input.up, joystickID, 9);
-            res = joystick.SetBtn(input.down, joystickID, 10);
-            res = joystick.SetBtn(input.left, joystickID, 11);
-            res = joystick.SetBtn(input.right, joystickID, 12);
+            // dpad
+            res = joystick.SetContPov(input.POVstate * 4500, joystickID, 1);
         }
 
         public static void setJoystick(ref vJoy joystick, GCNState input, uint joystickID, ControllerDeadZones deadZones)

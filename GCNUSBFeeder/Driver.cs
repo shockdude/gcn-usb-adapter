@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+#if DEBUG
+using System.Diagnostics;
+#endif
 
 using LibUsbDotNet;
 using LibUsbDotNet.Main;
@@ -52,6 +55,11 @@ namespace GCNUSBFeeder
         UsbDevice Turntable = null;
         IUsbDevice wholeGCNAdapter = null;
         IUsbDevice wholeTurntable = null;
+
+#if DEBUG
+        private Stopwatch sw;
+        private int count;
+#endif
 
         public void Start()
         {
@@ -117,7 +125,7 @@ namespace GCNUSBFeeder
                     // PORT 3: bytes 20-27
                     // PORT 4: bytes 29-36l
                     byte[] ReadBuffer = new byte[37]; // 32 (4 players x 8) bytes for input, 5 bytes for formatting
-                    Log(null, new LogEventArgs("Driver successfully started, entering input loop."));
+                    Log(null, new LogEventArgs("Driver successfully started, entering polling loop."));
                     run = true;
                     while (run)
                     {
@@ -152,7 +160,7 @@ namespace GCNUSBFeeder
                 }
                 else
                 {
-                    Log(null, new LogEventArgs("Driver successfully started, entering input loop."));
+                    Log(null, new LogEventArgs("Driver successfully started, entering interrupt loop."));
                     //using  Interrupt request instead of looping behavior.
                     reader.DataReceivedEnabled = true;
                     reader.DataReceived += reader_DataReceived;
@@ -163,13 +171,14 @@ namespace GCNUSBFeeder
             }
             else
             {
+                //PS3 Turntable
+                //VENDORID 0x12BA
+                //PRODUCT ID 0x0140
+
                 USBFinder = new UsbDeviceFinder(0x12BA, 0x0140);
                 Turntable = UsbDevice.OpenUsbDevice(USBFinder);
                 if (Turntable != null)
                 {
-                    //Log(null, new LogEventArgs("Turntable detected."));
-                    //Driver.run = false;
-
                     int transferLength;
 
                     reader = Turntable.OpenEndpointReader(ReadEndpointID.Ep01);
@@ -197,21 +206,38 @@ namespace GCNUSBFeeder
                     if (noEventMode)
                     {
                         byte[] ReadBuffer = new byte[27]; // 27 bytes for turntable
-                        Log(null, new LogEventArgs("Turntable Driver successfully started, entering input loop."));
+                        Log(null, new LogEventArgs("Turntable Driver successfully started, entering polling loop."));
                         run = true;
+
+#if DEBUG
+                        sw = Stopwatch.StartNew();
+                        count = 0;
+#endif
                         while (run)
                         {
-                            var ec = reader.Read(ReadBuffer, 10, out transferLength);
+                            var ec = reader.Read(ReadBuffer, 20, out transferLength);
 
                             if (transferLength > 0)
                             {
-                                // Console.WriteLine(BitConverter.ToString(ReadBuffer));
-
-                                var input1 = TurntableState.GetState(ReadBuffer);
-
+                                var input1 = TurntableState.GetState(ref ReadBuffer);
                                 if (gcn1ok) { JoystickHelper.setTurntable(ref gcn1, input1, 1, gcn1DZ); }
+#if DEBUG
+                                //Console.WriteLine(BitConverter.ToString(ReadBuffer));
+                                count += 1;
+                                long elapsed = sw.ElapsedMilliseconds;
+                                if (elapsed >= 1000)
+                                {
+                                    Console.WriteLine("{0} polls in {1} ms", count, elapsed);
+                                    count = 0;
+                                    sw.Reset(); sw.Start();
+                                }
+#endif
                             }
-                            System.Threading.Thread.Sleep(10);
+                            else
+                            {
+                                Log(null, new LogEventArgs("Warning: poll timeout"));
+                            }
+                            System.Threading.Thread.Sleep(5);
                         }
 
                         if (Turntable != null)
@@ -232,13 +258,17 @@ namespace GCNUSBFeeder
                     }
                     else
                     {
-                        Log(null, new LogEventArgs("Turntable Driver successfully started, entering input loop."));
+                        Log(null, new LogEventArgs("Turntable Driver successfully started, entering interrupt loop."));
                         //using  Interrupt request instead of looping behavior.
                         reader.DataReceivedEnabled = true;
                         reader.DataReceived += table_DataReceived;
                         reader.ReadBufferSize = 27;
                         reader.ReadThreadPriority = System.Threading.ThreadPriority.Highest;
                         run = true;
+#if DEBUG
+                        sw = Stopwatch.StartNew();
+                        count = 0;
+#endif
                     }
                 }
                 else
@@ -249,7 +279,7 @@ namespace GCNUSBFeeder
             }
         }
 
-        #region input parsing
+#region input parsing
         //Ugly, but faster than linq, at the very least.
         private byte[] getFastInput1(ref byte[] input)
         {
@@ -267,7 +297,7 @@ namespace GCNUSBFeeder
         {
             return new byte[] { input[28], input[29], input[30], input[31], input[32], input[33], input[34], input[35], input[36] };
         }
-        #endregion
+#endregion
 
         public void reader_DataReceived(object sender, EndpointDataEventArgs e)
         {
@@ -311,9 +341,21 @@ namespace GCNUSBFeeder
             if (run)
             {
                 var data = e.Buffer;
-                var input1 = TurntableState.GetState(data);
+                var input1 = TurntableState.GetState(ref data);
 
                 if (gcn1ok) { JoystickHelper.setTurntable(ref gcn1, input1, 1, gcn1DZ); }
+
+#if DEBUG
+                //Console.WriteLine(BitConverter.ToString(data));
+                count += 1;
+                long elapsed = sw.ElapsedMilliseconds;
+                if (elapsed >= 1000)
+                {
+                    Console.WriteLine("{0} interrupts in {1} ms", count, elapsed);
+                    count = 0;
+                    sw.Reset(); sw.Start();
+                }
+#endif
             }
             else
             {

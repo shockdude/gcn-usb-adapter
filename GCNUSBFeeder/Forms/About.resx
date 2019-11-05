@@ -515,8 +515,10 @@
 </value>
   </data>
   <data name="textBoxDescription.Text" xml:space="preserve">
-    <value>Project Home:
-https://bitbucket.org/elmassivo/gcn-usb-adapter/
+    <value>PS3 Turntable support added by shockdude.
+Project Home: https://github.com/shockdude/gcn-usb-adapter
+
+Original Project: https://bitbucket.org/elmassivo/gcn-usb-adapter/
 
 Written in C#, this program feeds data to vJoy (a virtual joystick application) from a WinUSB HID driver.
 
