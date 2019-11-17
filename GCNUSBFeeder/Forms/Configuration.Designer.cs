@@ -1189,15 +1189,16 @@
             // 
             // cbNoEventMode
             // 
+            this.cbNoEventMode.AllowDrop = true;
             this.cbNoEventMode.AutoSize = true;
             this.cbNoEventMode.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.cbNoEventMode.ForeColor = System.Drawing.Color.White;
-            this.cbNoEventMode.Location = new System.Drawing.Point(30, 133);
+            this.cbNoEventMode.Location = new System.Drawing.Point(94, 133);
             this.cbNoEventMode.Name = "cbNoEventMode";
             this.cbNoEventMode.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.cbNoEventMode.Size = new System.Drawing.Size(256, 17);
+            this.cbNoEventMode.Size = new System.Drawing.Size(192, 17);
             this.cbNoEventMode.TabIndex = 38;
-            this.cbNoEventMode.Text = "Windows 8+ Compatibility Mode";
+            this.cbNoEventMode.Text = "Polling mode (legacy)";
             this.cbNoEventMode.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.cbNoEventMode.UseVisualStyleBackColor = true;
             // 

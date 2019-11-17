@@ -82,10 +82,10 @@ namespace GCNUSBFeeder
             //[6] table right, centered at 128, lower is counterclockwise, upper is clockwise, probably 6 bits
             //effects
             //[19] bottom 8 bits
-            //[20] upper 4 bits
+            //[20] upper 2 bits
             //crossfader
             //[21] bottom 8 bits
-            //[22] upper 4 bits
+            //[22] upper 2 bits
             //[23]
             //01 = green right
             //02 = red right

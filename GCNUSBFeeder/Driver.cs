@@ -127,6 +127,11 @@ namespace GCNUSBFeeder
                     byte[] ReadBuffer = new byte[37]; // 32 (4 players x 8) bytes for input, 5 bytes for formatting
                     Log(null, new LogEventArgs("Driver successfully started, entering polling loop."));
                     run = true;
+
+#if DEBUG
+                        sw = Stopwatch.StartNew();
+                        count = 0;
+#endif
                     while (run)
                     {
                         var ec = reader.Read(ReadBuffer, 10, out transferLength);
@@ -139,6 +144,18 @@ namespace GCNUSBFeeder
                         if (gcn2ok) { JoystickHelper.setJoystick(ref gcn2, input2, 2, gcn2DZ); }
                         if (gcn3ok) { JoystickHelper.setJoystick(ref gcn3, input3, 3, gcn3DZ); }
                         if (gcn4ok) { JoystickHelper.setJoystick(ref gcn4, input4, 4, gcn4DZ); }
+
+#if DEBUG
+                        //Console.WriteLine(BitConverter.ToString(ReadBuffer));
+                        count += 1;
+                        long elapsed = sw.ElapsedMilliseconds;
+                        if (elapsed >= 1000)
+                        {
+                            Console.WriteLine("{0} polls in {1} ms", count, elapsed);
+                            count = 0;
+                            sw.Reset(); sw.Start();
+                        }
+#endif
                         System.Threading.Thread.Sleep(5);
                     }
 
@@ -162,11 +179,16 @@ namespace GCNUSBFeeder
                 {
                     Log(null, new LogEventArgs("Driver successfully started, entering interrupt loop."));
                     //using  Interrupt request instead of looping behavior.
-                    reader.DataReceivedEnabled = true;
                     reader.DataReceived += reader_DataReceived;
                     reader.ReadBufferSize = 37;
                     reader.ReadThreadPriority = System.Threading.ThreadPriority.Highest;
                     run = true;
+                    reader.DataReceivedEnabled = true;
+
+#if DEBUG
+                    sw = Stopwatch.StartNew();
+                    count = 0;
+#endif
                 }
             }
             else
@@ -260,11 +282,11 @@ namespace GCNUSBFeeder
                     {
                         Log(null, new LogEventArgs("Turntable Driver successfully started, entering interrupt loop."));
                         //using  Interrupt request instead of looping behavior.
-                        reader.DataReceivedEnabled = true;
                         reader.DataReceived += table_DataReceived;
                         reader.ReadBufferSize = 27;
                         reader.ReadThreadPriority = System.Threading.ThreadPriority.Highest;
                         run = true;
+                        reader.DataReceivedEnabled = true;
 #if DEBUG
                         sw = Stopwatch.StartNew();
                         count = 0;
@@ -313,6 +335,18 @@ namespace GCNUSBFeeder
                 if (gcn2ok) { JoystickHelper.setJoystick(ref gcn2, input2, 2, gcn2DZ); }
                 if (gcn3ok) { JoystickHelper.setJoystick(ref gcn3, input3, 3, gcn3DZ); }
                 if (gcn4ok) { JoystickHelper.setJoystick(ref gcn4, input4, 4, gcn4DZ); }
+
+#if DEBUG
+                //Console.WriteLine(BitConverter.ToString(data));
+                count += 1;
+                long elapsed = sw.ElapsedMilliseconds;
+                if (elapsed >= 1000)
+                {
+                    Console.WriteLine("{0} interrupts in {1} ms", count, elapsed);
+                    count = 0;
+                    sw.Reset(); sw.Start();
+                }
+#endif
             }
             else
             {

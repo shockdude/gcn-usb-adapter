@@ -77,7 +77,7 @@
             this.labelVersion.Name = "labelVersion";
             this.labelVersion.Size = new System.Drawing.Size(363, 17);
             this.labelVersion.TabIndex = 0;
-            this.labelVersion.Text = "Version 3.2.1T - 2019-11-04";
+            this.labelVersion.Text = "Version 3.2.1T2 - 2019-11-16";
             this.labelVersion.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.labelVersion.Click += new System.EventHandler(this.labelVersion_Click);
             // 
