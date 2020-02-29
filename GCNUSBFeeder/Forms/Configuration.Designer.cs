@@ -95,6 +95,7 @@
             this.cbAutoUpdates = new System.Windows.Forms.CheckBox();
             this.txtSaving = new System.Windows.Forms.Label();
             this.cbNoEventMode = new System.Windows.Forms.CheckBox();
+            this.cbSepTableButtons = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.port1AX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.port1AY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.port1CX)).BeginInit();
@@ -1202,12 +1203,28 @@
             this.cbNoEventMode.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.cbNoEventMode.UseVisualStyleBackColor = true;
             // 
+            // cbSepTableButtons
+            // 
+            this.cbSepTableButtons.AllowDrop = true;
+            this.cbSepTableButtons.AutoSize = true;
+            this.cbSepTableButtons.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.cbSepTableButtons.ForeColor = System.Drawing.Color.White;
+            this.cbSepTableButtons.Location = new System.Drawing.Point(14, 156);
+            this.cbSepTableButtons.Name = "cbSepTableButtons";
+            this.cbSepTableButtons.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.cbSepTableButtons.Size = new System.Drawing.Size(272, 17);
+            this.cbSepTableButtons.TabIndex = 39;
+            this.cbSepTableButtons.Text = "Separate Turntable Button Binds";
+            this.cbSepTableButtons.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.cbSepTableButtons.UseVisualStyleBackColor = true;
+            // 
             // Configuration
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(51)))), ((int)(((byte)(51)))));
             this.ClientSize = new System.Drawing.Size(961, 609);
+            this.Controls.Add(this.cbSepTableButtons);
             this.Controls.Add(this.cbNoEventMode);
             this.Controls.Add(this.txtSaving);
             this.Controls.Add(this.cbAutoUpdates);
@@ -1333,5 +1350,6 @@
         private System.Windows.Forms.CheckBox cbAutoUpdates;
         private System.Windows.Forms.Label txtSaving;
         private System.Windows.Forms.CheckBox cbNoEventMode;
+        private System.Windows.Forms.CheckBox cbSepTableButtons;
     }
 }

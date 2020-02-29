@@ -20,7 +20,8 @@ namespace GCNUSBFeeder
         public static event EventHandler<LogEventArgs> Log;
         public static bool run = false;
 
-        public static bool noEventMode = true;
+        public static bool noEventMode = false;
+        public static bool sepTableButtons = false;
 
         public static ControllerDeadZones gcn1DZ;
         public static ControllerDeadZones gcn2DZ;
@@ -242,7 +243,7 @@ namespace GCNUSBFeeder
                             if (transferLength > 0)
                             {
                                 var input1 = TurntableState.GetState(ref ReadBuffer);
-                                if (gcn1ok) { JoystickHelper.setTurntable(ref gcn1, input1, 1, gcn1DZ); }
+                                if (gcn1ok) { JoystickHelper.setTurntable(ref gcn1, input1, 1, gcn1DZ, sepTableButtons); }
 #if DEBUG
                                 //Console.WriteLine(BitConverter.ToString(ReadBuffer));
                                 count += 1;
@@ -377,7 +378,7 @@ namespace GCNUSBFeeder
                 var data = e.Buffer;
                 var input1 = TurntableState.GetState(ref data);
 
-                if (gcn1ok) { JoystickHelper.setTurntable(ref gcn1, input1, 1, gcn1DZ); }
+                if (gcn1ok) { JoystickHelper.setTurntable(ref gcn1, input1, 1, gcn1DZ, sepTableButtons); }
 
 #if DEBUG
                 //Console.WriteLine(BitConverter.ToString(data));

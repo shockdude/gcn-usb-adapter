@@ -10,7 +10,7 @@ namespace GCNUSBFeeder
     {
         public static event EventHandler<Driver.LogEventArgs> Log;
 
-        public static void setTurntable(ref vJoy joystick, TurntableState input, uint joystickID, ControllerDeadZones deadZones)
+        public static void setTurntable(ref vJoy joystick, TurntableState input, uint joystickID, ControllerDeadZones deadZones, bool sepTableButtons)
         {
             bool res;
             int multiplier = 128;
@@ -24,13 +24,29 @@ namespace GCNUSBFeeder
             res = joystick.SetAxis(multiplier * input.crossfader, joystickID, HID_USAGES.HID_USAGE_RY);
 
             //buttons
-            res = joystick.SetBtn(input.cross, joystickID, 1);
-            res = joystick.SetBtn(input.circle, joystickID, 2);
-            res = joystick.SetBtn(input.square, joystickID, 3);
-            res = joystick.SetBtn(input.triangle, joystickID, 4);
-            res = joystick.SetBtn(input.select, joystickID, 7);
-            res = joystick.SetBtn(input.start, joystickID, 8);
-            res = joystick.SetBtn(input.ps, joystickID, 11);
+            if (sepTableButtons)
+            {
+                res = joystick.SetBtn(input.gL, joystickID, 1);
+                res = joystick.SetBtn(input.rL, joystickID, 2);
+                res = joystick.SetBtn(input.bL, joystickID, 3);
+                res = joystick.SetBtn(input.gR, joystickID, 4);
+                res = joystick.SetBtn(input.rR, joystickID, 5);
+                res = joystick.SetBtn(input.bR, joystickID, 6);
+                res = joystick.SetBtn(input.triangle, joystickID, 7);
+                res = joystick.SetBtn(input.select, joystickID, 8);
+                res = joystick.SetBtn(input.start, joystickID, 9);
+                res = joystick.SetBtn(input.ps, joystickID, 11);
+            }
+            else
+            {
+                res = joystick.SetBtn(input.cross, joystickID, 1);
+                res = joystick.SetBtn(input.circle, joystickID, 2);
+                res = joystick.SetBtn(input.square, joystickID, 3);
+                res = joystick.SetBtn(input.triangle, joystickID, 4);
+                res = joystick.SetBtn(input.select, joystickID, 7);
+                res = joystick.SetBtn(input.start, joystickID, 8);
+                res = joystick.SetBtn(input.ps, joystickID, 11);
+            }
 
             // dpad
             res = joystick.SetContPov(input.POVstate * 4500, joystickID, 1);

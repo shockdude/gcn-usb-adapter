@@ -32,6 +32,7 @@ namespace GCNUSBFeeder
             cbDisablevJoyOnExit.Checked = (bool)Settings.Default["disablePortsOnExit"];
             
             cbNoEventMode.Checked       = (bool)Settings.Default["noEventMode"];
+            cbSepTableButtons.Checked   = (bool)Settings.Default["sepTableButtons"];
 
             port1Enabled.Checked = (bool)Settings.Default["port1Enabled"];
             port2Enabled.Checked = (bool)Settings.Default["port2Enabled"];
@@ -87,6 +88,7 @@ namespace GCNUSBFeeder
             Settings.Default["disablePortsOnExit"] = cbDisablevJoyOnExit.Checked;
 
             Settings.Default["noEventMode"] = cbNoEventMode.Checked;
+            Settings.Default["sepTableButtons"] = cbSepTableButtons.Checked;
 
             //disable joysticks we don't want, but only when a change has occured.
             if ((bool)Settings.Default["port1Enabled"] != port1Enabled.Checked)
@@ -179,6 +181,7 @@ namespace GCNUSBFeeder
             MainForm.disablePortsOnExit = (bool)Settings.Default["disablePortsOnExit"];
 
             Driver.noEventMode = (bool)Settings.Default["noEventMode"];
+            Driver.sepTableButtons = (bool)Settings.Default["sepTableButtons"];
 
             Driver.gcn1Enabled = (bool)Settings.Default["port1Enabled"];
             Driver.gcn2Enabled = (bool)Settings.Default["port2Enabled"];

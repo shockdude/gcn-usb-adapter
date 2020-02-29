@@ -490,5 +490,17 @@ namespace GCNUSBFeeder.Properties {
                 this["noEventMode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool sepTableButtons {
+            get {
+                return ((bool)(this["sepTableButtons"]));
+            }
+            set {
+                this["sepTableButtons"] = value;
+            }
+        }
     }
 }

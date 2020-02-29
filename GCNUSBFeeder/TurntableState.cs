@@ -23,12 +23,12 @@ namespace GCNUSBFeeder
         public int effects;
         public int crossfader;
 
-        //public bool gR;
-        //public bool rR;
-        //public bool bR;
-        //public bool gL;
-        //public bool rL;
-        //public bool bL;
+        public bool gR;
+        public bool rR;
+        public bool bR;
+        public bool gL;
+        public bool rL;
+        public bool bL;
 
         public TurntableState()
         {
@@ -48,12 +48,12 @@ namespace GCNUSBFeeder
             crossfader = 128;
             effects = 128;
 
-            //gR = false;
-            //rR = false;
-            //bR = false;
-            //gL = false;
-            //rL = false;
-            //bL = false;
+            gR = false;
+            rR = false;
+            bR = false;
+            gL = false;
+            rL = false;
+            bL = false;
         }
 
         public static int Clamp(int value, int min, int max)
@@ -124,13 +124,13 @@ namespace GCNUSBFeeder
                 pad.effects = ((input[19] & 0xF0) >> 2) | (input[20] << 6);
                 pad.crossfader = ((input[21] & 0xF0) >> 2) | (input[22] << 6);
 
-                //b = input[23];
-                //pad.gR = (b & (1 << 0)) != 0;
-                //pad.rR = (b & (1 << 1)) != 0;
-                //pad.bR = (b & (1 << 2)) != 0;
-                //pad.gL = (b & (1 << 4)) != 0;
-                //pad.rL = (b & (1 << 5)) != 0;
-                //pad.bL = (b & (1 << 6)) != 0;
+                b = input[23];
+                pad.gR = (b & (1 << 0)) != 0;
+                pad.rR = (b & (1 << 1)) != 0;
+                pad.bR = (b & (1 << 2)) != 0;
+                pad.gL = (b & (1 << 4)) != 0;
+                pad.rL = (b & (1 << 5)) != 0;
+                pad.bL = (b & (1 << 6)) != 0;
 
                 return pad;
             }
